@@ -15,12 +15,12 @@ sed -i "s/dc=my-domain,dc=com/dc=${domain},dc=${TLD}/g" olcDatabase={2}hdb.ldif
 text=`cat /tmp/passwd.txt`
 echo "olcRootPW:$text" >> olcDatabase={2}hdb.ldif
 sed -i "s/dc=my-domain,dc=com/dc=${domain},dc=${TLD}/g" olcDatabase={1}monitor.ldif
-systemctl start slapd &&  systemctl enable slapd
 cp /usr/share/openldap-servers/DB_CONFIG.example /var/lib/ldap/DB_CONFIG
 chown -R ldap:ldap /var/lib/ldap/
 openssl req -new -x509 -nodes -out /etc/pki/tls/certs/"$domain"ldap.pem -keyout /etc/pki/tls/certs/"$domain"ldapkey.pem -days 365 -subj "/C=IN/ST=Chennai/L=Chennai/O=T2S/OU=IT/CN=$domain.$TLD"
 echo -e "olcTLSCertificateFile: /etc/pki/tls/certs/"$domain"ldap.pem
 olcTLSCertificateKeyFile: /etc/pki/tls/certs/"$domain"ldapkey.pem" >> /etc/openldap/slapd.d/cn=config/olcDatabase={2}hdb.ldif
+systemctl start slapd &&  systemctl enable slapd
 cd $LDAP_DIR
 ldapadd -Y EXTERNAL -H ldapi:/// -f /etc/openldap/schema/cosine.ldif -w vagrant
 ldapadd -Y EXTERNAL -H ldapi:/// -f /etc/openldap/schema/nis.ldif -w vagrant
